@@ -137,7 +137,7 @@ async def handle_events(conn, one_turn: bool, speaker):
         elif kind == "response.output_item.done" and event.item.type == "function_call":
             item = event.item
             result = run_tool(item.name, item.arguments)
-            print(f"  -> {item.name}({item.arguments}) = {result}")
+            print(f"  -> {item.name}({' '.join(item.arguments.split())}) = {result}")
             await conn.conversation.item.create(
                 item={"type": "function_call_output", "call_id": item.call_id, "output": result})
             await conn.response.create()
