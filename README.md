@@ -17,7 +17,7 @@ That diff is the whole migration. Every changed line in `after.py` has a `MIGRAT
 
 | | `before.py` (OpenAI) | `after.py` (Dialog-RSN-1) |
 |---|---|---|
-| Base URL | `https://api.openai.com/v1` | `https://api.us.poly.ai/v1` |
+| Base URL | `https://api.openai.com/v1` | `https://api.studio.poly.ai/v1` |
 | Key | OpenAI API key | Dialog-RSN-1 workspace API key |
 | Replies | `output_modalities: ["audio"]`, a voice, an audio output format | `output_modalities: ["text"]`, no `audio.output` |
 | Transcription | `gpt-4o-mini-transcribe` | none to configure: the model transcribes as part of its turn |
