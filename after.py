@@ -26,7 +26,7 @@ from hotel import INSTRUCTIONS, TOOLS, run_tool
 # MIGRATION: a new base URL and key. The SDK still appends /realtime and sends the key as
 # Authorization: Bearer, both of which Dialog-RSN-1 accepts.
 BASE_URL = os.environ.get("DIALOGUE_BASE_URL", "https://api.studio.poly.ai/v1")
-API_KEY_VAR = "DIALOGUE_API_KEY"
+API_KEY_VAR = "DIALOG_API_KEY"
 MODEL = "dialog-rsn-1"
 
 SAMPLE_RATE = 24_000
