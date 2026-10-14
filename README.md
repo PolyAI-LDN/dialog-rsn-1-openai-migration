@@ -50,7 +50,7 @@ the route the guide covers.
 You need Python 3.12 and [uv](https://docs.astral.sh/uv/).
 
 ```bash
-cp .env.example .env    # add DIALOG_API_KEY, and OPENAI_API_KEY to run before.py
+cp .env.example .env    # add POLY_API_KEY, and OPENAI_API_KEY to run before.py
 uv sync
 
 uv run after.py --say "Can you look up booking GM40912?"   # one text turn
