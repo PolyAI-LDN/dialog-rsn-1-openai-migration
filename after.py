@@ -23,6 +23,8 @@ from openai import AsyncOpenAI
 
 from hotel import INSTRUCTIONS, TOOLS, run_tool
 
+load_dotenv()  # before the settings below are read, so .env can set them
+
 # MIGRATION: a new base URL and key. The SDK still appends /realtime and sends the key as
 # Authorization: Bearer, both of which Dialog-RSN-1 accepts.
 BASE_URL = os.environ.get("DIALOGUE_BASE_URL", "https://api.studio.poly.ai/v1")
@@ -36,7 +38,8 @@ SESSION = {
     "type": "realtime",
     "instructions": INSTRUCTIONS,
     "tools": TOOLS,
-    # MIGRATION: replies are text only. Asking for audio, or sending audio.output, is an error.
+    # MIGRATION: text replies, for a text-to-speech provider you choose. Sessions start in audio,
+    # spoken by the service's own voice, so ask for text explicitly.
     "output_modalities": ["text"],
     "audio": {
         "input": {
@@ -44,7 +47,7 @@ SESSION = {
             # MIGRATION: no transcription model. The model transcribes the guest as part of its
             # turn, and the transcript still arrives as input_audio_transcription events.
             # MIGRATION: create_response is the only turn_detection field the service reads. The
-            # model decides when the guest has finished, so the timing fields are rejected.
+            # model decides when the guest has finished, so the timing fields are ignored.
             "turn_detection": {"type": "server_vad", "create_response": True},
         },
     },
@@ -119,7 +122,6 @@ async def handle_events(conn, one_turn: bool):
 
 
 async def main(args):
-    load_dotenv()
     key = os.environ.get(API_KEY_VAR)
     if not key:
         sys.exit(f"{API_KEY_VAR} is not set. Copy .env.example to .env and fill it in.")

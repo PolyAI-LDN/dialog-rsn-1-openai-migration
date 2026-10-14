@@ -33,16 +33,17 @@ model name in `connect()` is only a label here. The service runs Dialog-RSN-1 wh
 
 ## What happens if you only change the URL and key
 
-Point `before.py` at Dialog-RSN-1 unchanged and it connects, then prints this and nothing else:
+Point `before.py` at Dialog-RSN-1 unchanged and it runs. The service keeps
+`output_modalities: ["audio"]`, speaks each reply in its own managed voice, and sends the
+transcript as `response.output_audio_transcript.*`, the events `before.py` already prints.
 
-```text
-[error] 'audio.output' is not supported by this service. This service has no audio output, so bring your own TTS.
-```
+The OpenAI-only settings are accepted and ignored. The service's default voice speaks instead of
+`marin`, there's no transcription model to choose, and the tuned `threshold`,
+`prefix_padding_ms` and `silence_duration_ms` are dropped, since the model decides when the
+guest has finished. `session.updated` shows only the settings in effect.
 
-A rejected `session.update` applies none of its fields, so the instructions and tools go with it.
-The model still answers, but in text events that `before.py` never listens for. The same goes
-for the tuned turn-detection fields: `threshold`, `prefix_padding_ms`, `silence_duration_ms`,
-`interrupt_response` and `semantic_vad` are each rejected with `unsupported_parameter`.
+`after.py` takes the other route: text replies, for a text-to-speech provider you choose. That's
+the route the guide covers.
 
 ## Run it
 
