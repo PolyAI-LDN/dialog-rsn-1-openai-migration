@@ -18,7 +18,7 @@ That diff is the whole migration. Every changed line in `after.py` has a `MIGRAT
 | | `before.py` (OpenAI) | `after.py` (Dialog-RSN-1) |
 |---|---|---|
 | Base URL | `https://api.openai.com/v1` | `https://api.studio.poly.ai/v1` |
-| Key | OpenAI API key | Dialog-RSN-1 workspace API key |
+| Key | OpenAI API key | Dialog-RSN-1 API key from the **API Keys** tab at [studio.poly.ai](https://studio.poly.ai) |
 | Replies | `output_modalities: ["audio"]`, a voice, an audio output format | `output_modalities: ["text"]`, no `audio.output` |
 | Transcription | `gpt-4o-mini-transcribe` | none to configure: the model transcribes as part of its turn |
 | Turn detection | `server_vad` with tuned `threshold`, padding and silence | `server_vad` with `create_response` only |
@@ -50,7 +50,7 @@ the route the guide covers.
 You need Python 3.12 and [uv](https://docs.astral.sh/uv/).
 
 ```bash
-cp .env.example .env    # add DIALOG_API_KEY, and OPENAI_API_KEY to run before.py
+cp .env.example .env    # add POLY_API_KEY, and OPENAI_API_KEY to run before.py
 uv sync
 
 uv run after.py --say "Can you look up booking GM40912?"   # one text turn

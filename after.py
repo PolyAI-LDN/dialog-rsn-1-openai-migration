@@ -30,7 +30,7 @@ load_dotenv()  # before the settings below are read, so .env can set them
 # Dialog-RSN-1 accepts.
 REALTIME_URL = os.environ.get("DIALOG_REALTIME_URL", "wss://api.studio.poly.ai/v1/realtime")
 BASE_URL = REALTIME_URL.removesuffix("/realtime").replace("wss://", "https://", 1)
-API_KEY_VAR = "DIALOG_API_KEY"
+API_KEY_VAR = "POLY_API_KEY"
 MODEL = "dialog-rsn-1"
 
 SAMPLE_RATE = 24_000
