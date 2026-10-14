@@ -25,9 +25,11 @@ from hotel import INSTRUCTIONS, TOOLS, run_tool
 
 load_dotenv()  # before the settings below are read, so .env can set them
 
-# MIGRATION: a new base URL and key. The SDK still appends /realtime and sends the key as
-# Authorization: Bearer, both of which Dialog-RSN-1 accepts.
-BASE_URL = os.environ.get("DIALOGUE_BASE_URL", "https://api.studio.poly.ai/v1")
+# MIGRATION: a new URL and key. DIALOG_REALTIME_URL is the full realtime URL; the SDK takes the
+# base and appends /realtime itself. It sends the key as Authorization: Bearer, which
+# Dialog-RSN-1 accepts.
+REALTIME_URL = os.environ.get("DIALOG_REALTIME_URL", "wss://api.studio.poly.ai/v1/realtime")
+BASE_URL = REALTIME_URL.removesuffix("/realtime").replace("wss://", "https://", 1)
 API_KEY_VAR = "DIALOG_API_KEY"
 MODEL = "dialog-rsn-1"
 
