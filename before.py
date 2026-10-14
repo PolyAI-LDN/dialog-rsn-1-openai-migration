@@ -24,6 +24,8 @@ from openai import AsyncOpenAI
 
 from hotel import INSTRUCTIONS, TOOLS, run_tool
 
+load_dotenv()  # before the settings below are read, so .env can set them
+
 BASE_URL = os.environ.get("OPENAI_BASE_URL", "https://api.openai.com/v1")
 API_KEY_VAR = "OPENAI_API_KEY"
 MODEL = "gpt-realtime"
@@ -151,7 +153,6 @@ async def handle_events(conn, one_turn: bool, speaker):
 
 
 async def main(args):
-    load_dotenv()
     key = os.environ.get(API_KEY_VAR)
     if not key:
         sys.exit(f"{API_KEY_VAR} is not set. Copy .env.example to .env and fill it in.")

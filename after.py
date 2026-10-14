@@ -23,9 +23,13 @@ from openai import AsyncOpenAI
 
 from hotel import INSTRUCTIONS, TOOLS, run_tool
 
-# MIGRATION: a new base URL and key. The SDK still appends /realtime and sends the key as
-# Authorization: Bearer, both of which Dialog-RSN-1 accepts.
-BASE_URL = os.environ.get("DIALOGUE_BASE_URL", "https://api.studio.poly.ai/v1")
+load_dotenv()  # before the settings below are read, so .env can set them
+
+# MIGRATION: a new URL and key. DIALOG_REALTIME_URL is the full realtime URL; the SDK takes the
+# base and appends /realtime itself. It sends the key as Authorization: Bearer, which
+# Dialog-RSN-1 accepts.
+REALTIME_URL = os.environ.get("DIALOG_REALTIME_URL", "wss://api.studio.poly.ai/v1/realtime")
+BASE_URL = REALTIME_URL.removesuffix("/realtime").replace("wss://", "https://", 1)
 API_KEY_VAR = "DIALOG_API_KEY"
 MODEL = "dialog-rsn-1"
 
@@ -36,7 +40,8 @@ SESSION = {
     "type": "realtime",
     "instructions": INSTRUCTIONS,
     "tools": TOOLS,
-    # MIGRATION: replies are text only. Asking for audio, or sending audio.output, is an error.
+    # MIGRATION: text replies, for a text-to-speech provider you choose. Sessions start in audio,
+    # spoken by the service's own voice, so ask for text explicitly.
     "output_modalities": ["text"],
     "audio": {
         "input": {
@@ -44,7 +49,7 @@ SESSION = {
             # MIGRATION: no transcription model. The model transcribes the guest as part of its
             # turn, and the transcript still arrives as input_audio_transcription events.
             # MIGRATION: create_response is the only turn_detection field the service reads. The
-            # model decides when the guest has finished, so the timing fields are rejected.
+            # model decides when the guest has finished, so the timing fields are ignored.
             "turn_detection": {"type": "server_vad", "create_response": True},
         },
     },
@@ -119,7 +124,6 @@ async def handle_events(conn, one_turn: bool):
 
 
 async def main(args):
-    load_dotenv()
     key = os.environ.get(API_KEY_VAR)
     if not key:
         sys.exit(f"{API_KEY_VAR} is not set. Copy .env.example to .env and fill it in.")
