@@ -1,6 +1,6 @@
 # Moving an OpenAI Realtime agent to Dialog-RSN-1
 
-Companion code for [Migrating from OpenAI Realtime](https://dialog-rsn-1-eap-docs.pages.dev/dialog-rsn-1/guides/openai-realtime-migration/).
+Companion code for [Migrating from OpenAI Realtime](https://docs.poly.ai/dialog-rsn-1/guides/openai-realtime-migration).
 
 One voice agent, twice. `before.py` is a front-desk agent for the fictional Grand Meridian Hotel,
 written against the OpenAI Realtime API with the official `openai` SDK. `after.py` is the same
@@ -40,7 +40,8 @@ transcript as `response.output_audio_transcript.*`, the events `before.py` alrea
 The OpenAI-only settings are accepted and ignored. The service's default voice speaks instead of
 `marin`, there's no transcription model to choose, and the tuned `threshold`,
 `prefix_padding_ms` and `silence_duration_ms` are dropped, since the model decides when the
-guest has finished. `session.updated` shows only the settings in effect.
+guest has finished. `session.updated` shows only the settings in effect. To pick the voice,
+set `audio.output.voice` to a Cartesia voice id.
 
 `after.py` takes the other route: text replies, for a text-to-speech provider you choose. That's
 the route the guide covers.
@@ -80,8 +81,10 @@ Demo bookings: `GM40912` (Okafor), `GM41055` (Reid), `GM41182` (Reid, a suite),
 
 ## Where the voice goes
 
-Dialog-RSN-1 replies in text. To speak the replies, stream `response.output_text.delta` into a
-text-to-speech provider. The [streaming to text-to-speech guide](https://dialog-rsn-1-eap-docs.pages.dev/dialog-rsn-1/guides/streaming-text-to-speech/)
+By default, Dialog-RSN-1 speaks each reply in its own voice. Once you set
+`output_modalities: ["text"]`, as `after.py` does, it replies in text instead. To speak those
+replies, stream `response.output_text.delta` into a text-to-speech provider. The
+[streaming to text-to-speech guide](https://docs.poly.ai/dialog-rsn-1/guides/streaming-text-to-speech)
 covers it, including how to report playback so interruptions work across the whole reply.
 
 ## License
