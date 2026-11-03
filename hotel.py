@@ -60,6 +60,18 @@ LATE_CHECKOUT_FEE_GBP = 25
 FREE_LATE_CHECKOUT_UNTIL = "16:00"
 LATEST_CHECKOUT = "18:00"
 
+# The checkout time each booking came with. A late checkout fee is for leaving later than this.
+BOOKED_CHECKOUT = {code: r["checkout_time"] for code, r in RESERVATIONS.items()}
+
+
+def _minutes(hhmm: str) -> int | None:
+    """Minutes after midnight for a 24-hour H:MM or HH:MM time, or None if it isn't one."""
+    hours, sep, mins = hhmm.strip().partition(":")
+    if not (sep and hours.isdigit() and mins.isdigit() and len(hours) <= 2 and len(mins) == 2):
+        return None
+    h, m = int(hours), int(mins)
+    return h * 60 + m if h < 24 and m < 60 else None
+
 
 def look_up_reservation(confirmation_code: str = "", last_name: str = "") -> dict:
     if confirmation_code:
@@ -94,10 +106,15 @@ def change_checkout_time(confirmation_code: str, new_checkout_time: str) -> dict
         return {"error": f"No reservation found for {code}."}
     if reservation["status"] != "confirmed":
         return {"error": f"This reservation is {reservation['status']}, so checkout can't change."}
-    if new_checkout_time > LATEST_CHECKOUT:
+    new = _minutes(new_checkout_time)
+    if new is None:
+        return {"error": "Give the checkout time as 24-hour HH:MM, for example 14:00."}
+    new_checkout_time = f"{new // 60:02d}:{new % 60:02d}"
+    if new > _minutes(LATEST_CHECKOUT):
         return {"error": f"The latest checkout we can offer is {LATEST_CHECKOUT}."}
-    free = new_checkout_time <= FREE_LATE_CHECKOUT_UNTIL and (
-        reservation["member"] or "Suite" in reservation["room_type"])
+    late = new > _minutes(BOOKED_CHECKOUT.get(code, reservation["checkout_time"]))
+    free = not late or (new <= _minutes(FREE_LATE_CHECKOUT_UNTIL) and (
+        reservation["member"] or "Suite" in reservation["room_type"]))
     previous, reservation["checkout_time"] = reservation["checkout_time"], new_checkout_time
     return {"status": "updated", "confirmation_code": code, "previous_checkout_time": previous,
             "new_checkout_time": new_checkout_time, "fee_gbp": 0 if free else LATE_CHECKOUT_FEE_GBP}
