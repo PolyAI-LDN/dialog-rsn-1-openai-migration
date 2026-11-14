@@ -125,7 +125,9 @@ async def handle_events(conn, one_turn: bool, speaker):
     tool_called = False
     async for event in conn:
         kind = event.type
-        if kind == "conversation.item.input_audio_transcription.completed":
+        if kind == "response.created":
+            reply = ""
+        elif kind == "conversation.item.input_audio_transcription.completed":
             print(f"Guest:  {event.transcript.strip()}")
         elif kind == "input_audio_buffer.speech_started":
             speaker.clear()  # barge-in: stop talking over the guest

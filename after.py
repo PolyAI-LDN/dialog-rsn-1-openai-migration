@@ -99,7 +99,9 @@ async def handle_events(conn, one_turn: bool):
     tool_called = False
     async for event in conn:
         kind = event.type
-        if kind == "conversation.item.input_audio_transcription.completed":
+        if kind == "response.created":
+            reply = ""
+        elif kind == "conversation.item.input_audio_transcription.completed":
             print(f"Guest:  {event.transcript.strip()}")
         # MIGRATION: the reply arrives as text events instead of audio and its transcript.
         elif kind == "response.output_text.delta":
