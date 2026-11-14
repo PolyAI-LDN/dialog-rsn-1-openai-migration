@@ -113,10 +113,11 @@ async def handle_events(conn, one_turn: bool):
             print(f"  -> {item.name}({' '.join(item.arguments.split())}) = {result}")
             await conn.conversation.item.create(
                 item={"type": "function_call_output", "call_id": item.call_id, "output": result})
-            await conn.response.create()
             tool_called = True
         elif kind == "response.done":
-            if one_turn and not tool_called:
+            if tool_called and event.response.status == "completed":
+                await conn.response.create()
+            elif one_turn:
                 return
             tool_called = False
         elif kind == "error":
